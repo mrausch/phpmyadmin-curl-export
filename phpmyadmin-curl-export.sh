@@ -187,7 +187,7 @@ function phpmyadmin_auth_cookie()
 
 function phpmyadmin_get_token_from_response()
 {
-    echo $(cat $curl_save_response_path | grep link | grep 'phpmyadmin.css.php' | grep -o -E "token=([^\&\'])*" | cut -d= -f2 | head -1)
+    echo $(cat $curl_save_response_path | grep 'hidden' | grep 'token' | grep -oE "value=\"(([a-f]|[0-9]){32})\"" | cut -d= -f2 | head -1 | cut -d\" -f2)
 }
 
 function phpmyadmin_remove_tmp_files()
