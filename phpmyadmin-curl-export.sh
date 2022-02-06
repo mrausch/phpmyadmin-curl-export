@@ -210,7 +210,7 @@ function phpmyadmin_check_response_code()
 
 function phpmyadmin_check_content_disposition_header()
 {
-    local content_disposition=$(tac $headers_path | grep Content-Disposition | head -1 | cut -f2 -d' ')
+    local content_disposition=$(tac $headers_path | grep 'content-disposition' | head -1 | cut -f2 -d' ')
     if [ $content_disposition == 'attachment;' ]; then
         return 0
     else
