@@ -2,17 +2,17 @@
 #===============================================================================
 #
 #          FILE: phpmyadmin-curl-export.sh
-# 
+#
 #         USAGE: phpmyadmin-curl-export.sh
-# 
+#
 #   DESCRIPTION: Connect to phpMyAdmin and export database to file.
-# 
+#
 #       OPTIONS: See phpmyadmin-curl-export.sh --help
 #  REQUIREMENTS: curl, coreutils, grep
 #          BUGS: https://github.com/morawskim/phpmyadmin-curl-export/issues
 #         NOTES: ---
-#        AUTHOR: Marcin Morawski (marcin@morawskim.pl), 
-#  ORGANIZATION: 
+#        AUTHOR: Marcin Morawski (marcin@morawskim.pl),
+#  ORGANIZATION:
 #       CREATED: 20.03.2016 09:59
 #      REVISION: 1
 #===============================================================================
@@ -31,7 +31,7 @@ cookie_path='/tmp/phpmyadmin-curl.cookies'
 headers_path='/tmp/phpmyadmin-curl.headers'
 response_path='/tmp/phpmyadmin-curl.response'
 
-culr_cookie_option="-b $cookie_path -c $cookie_path"
+curl_cookie_option="-b $cookie_path -c $cookie_path"
 curl_dump_headers_option="-D $headers_path"
 curl_save_response_path=$response_path
 
@@ -96,11 +96,11 @@ function parse_arguments()
             ;;
         esac
     done
-    
+
     if [ ${#http_username} -gt 0 -a ${#http_password} -gt 0 ]; then
         use_http_auth="--basic -u $http_username:$http_password"
     fi
-    
+
     if [ -z $save_to ]; then
         save_to=$(date +"%F-$phpmyadmin_dbname.$save_to_extension")
     fi
@@ -111,7 +111,7 @@ function phpmyadmin_help()
     cat <<EOF
 Arguments: $0 [--help] [--auth-type=<cookie|basic>] [--http-basic-user=<apache_http_user>] [--http-basic-password=<apache_http_password>] [--phpmyadmin-user=<phpmyadmin_user>] [--phpmyadmin-password=<phpmyadmin_password>] [--phpmyadmin-server=<phpmyadmin_server>] [--dbname=<database>] [--host=<phpmyadmin_host>] [--save-to=<%F-\$dbname.sql>] [--compression] [--add-drop]
        --help: Print help
-       --auth-type=<cookie|basic>: Method of authentication to phpMyAdmin 
+       --auth-type=<cookie|basic>: Method of authentication to phpMyAdmin
        --http-basic-user=<apache_http_user>: Username for HTTP basic authentication
        --http-basic-password=<apache_http_password>: Password for HTTP basic authentication
        --phpmyadmin-user=<phpmyadmin_user>: PhpMyAdmin user (used by cookie auth)
@@ -139,7 +139,7 @@ function phpmyadmin_auth_basic()
         -s \
         -k \
         $curl_dump_headers_option \
-        $culr_cookie_option \
+        $curl_cookie_option \
         -L > $curl_save_response_path
 
     phpmyadmin_check_response_code "Cant login by auth_basic to $phpmyadmin_host"
@@ -153,7 +153,7 @@ function phpmyadmin_auth_cookie()
 
     curl "$phpmyadmin_host/index.php" \
         -s -k $curl_dump_headers_option \
-        $culr_cookie_option \
+        $curl_cookie_option \
         -L > $curl_save_response_path
 
     phpmyadmin_check_response_code "Cant login by cookie to $phpmyadmin_host"
@@ -174,7 +174,7 @@ function phpmyadmin_auth_cookie()
         -s \
         -L \
         --data $post_params \
-        $culr_cookie_option  > $curl_save_response_path
+        $curl_cookie_option  > $curl_save_response_path
 
     phpmyadmin_check_response_code "Cant login by cookie to $phpmyadmin_host"
 }
@@ -326,11 +326,11 @@ curl "$phpmyadmin_host/export.php" \
     $curl_dump_headers_option \
     -L \
     -s \
-    $culr_cookie_option \
+    $curl_cookie_option \
     -H 'Connection: keep-alive' \
     -o $save_to \
     --data $post_params
-  
+
 phpmyadmin_check_response_code "Cant dump database $phpmyadmin_dbname"
 phpmyadmin_check_content_disposition_header "Response don't have valid Content-Disposition header"
 
