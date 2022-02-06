@@ -160,6 +160,12 @@ function phpmyadmin_auth_cookie()
 
     local token=$(phpmyadmin_get_token_from_response)
 
+    # check for empty tokens
+    if [[ "$token" == "" ]]; then
+        echo "Error: could not retrieve form token from request response."
+        exit 2
+    fi
+
     local post_params="pma_username=$username"
     post_params="$post_params&pma_password=$password"
     post_params="$post_params&server=$server"
